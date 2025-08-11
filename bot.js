@@ -1,22 +1,4 @@
-/*
 
-________       .___                    
-\_____  \    __| _/____  ___.__. ______
- /  ____/   / __ |\__  \<   |  |/  ___/
-/       \  / /_/ | / __ \\___  |\___ \ 
-\_______ \ \____ |(____  / ____/____  >
-        \/      \/     \/\/         \/ 
-
-    .___                          
-  __| _/____   ____   ____ ___.__.
- / __ |/ __ \ /    \ /    <   |  |
-/ /_/ \  ___/|   |  \   |  \___  |
-\____ |\___  >___|  /___|  / ____|
-     \/    \/     \/     \/\/     
-
-Tryout bot - made by denny (:, custom-made for discord.gg/aculon (2.5k members)
-check out README.md for more information
-*/
 
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const axios = require('axios');
@@ -25,108 +7,50 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 // Temporary storage for tryout data
 const pendingTryouts = new Map();
 
-const TOKEN = 'YOUR_TOKEN_HERE'; // Replace with your bot token
-const ALLOWED_GUILD_ID = 'YOUR_SERVER_ID'; // The only guild the bot is allowed to operate in ORIGINAL one: 1344501419943661608
+const TOKEN = MTQwNDU1NDEwMjg1OTYzMjc3MQ.GjdUgO.A8KoAJw4UpR7iT6syJPTu6b6jZRB06jF-N3BcI; // Replace with your bot token
+const ALLOWED_GUILD_ID = 1404531292762017892; // The only guild the bot is allowed to operate in ORIGINAL one: 1344501419943661608
 
 // Define allowed roles for interactions (replace with actual Tryout Host role ID)
-const ALLOWED_ROLES = ['1344513953132445697', '1353401830134124564', '1353401886153248839', '1356797774741639199', '1344664875485626378', '1356665433662685230']; // Role ID for Tryout Host
+const ALLOWED_ROLES = ['1065431492416778332', '1263681901244448838', '813881130372825098']; // Role ID for Tryout Host
 
 // Define division roles with role IDs for MVSD, RIVALS, TSB
 const GAME_PREFIXES = {
-  MVSD: 'MVSD',
+
   RIVALS: 'RV',
-  TSB: 'TSB'
+  
 };
 const DIVISION_ROLES = {
-  MVSD: {
-    'MVSD Division 1': { 
-      roleIds: ['1344810744843079750', '1344697648568995861'], // Replace with MVSD Imperial Warlord, MVSD Division 1 role IDs
-      color: '#FFD700', 
-      minScore: 48, 
-      requiredRoles: ['1344810744843079750', '1344697648568995861'] // Same as roleIds for Division 1
-    },
-    'MVSD Division 2': { 
-      roleIds: ['1344810875248181268', '1345014180859740222'], // Replace with MVSD Grand Reaper, MVSD Division 2 role IDs
-      color: '#C0C0C0', 
-      minScore: 43, 
-      maxScore: 47, 
-      requiredRoles: ['1344810744843079750', '1344697648568995861', '1344810875248181268', '1345014180859740222'] 
-    },
-    'MVSD Division 3': { 
-      roleIds: ['1344811535540686960', '1344664130896003185'], // Replace with MVSD Reaper, MVSD Division 3 role IDs
-      color: '#CD7F32', 
-      minScore: 30, 
-      maxScore: 42, 
-      requiredRoles: ['1344810744843079750', '1344697648568995861', '1344810875248181268', '1345014180859740222'] 
-    },
-    'MVSD Division 4': { 
-      roleIds: ['1344811658551230485', '1346823147135172692'], // Replace with MVSD Guard, MVSD Division 4 role IDs
-      color: '#00FF00', 
-      minScore: 0, 
-      maxScore: 29, 
-      requiredRoles: ['1344810744843079750', '1344697648568995861', '1344810875248181268', '1345014180859740222'] 
-    }
-  },
+
   RIVALS: {
     'RV Division 1': { 
-      roleIds: ['1348010338280280104', '1344697648568995861'], // Replace with RV Imperial Warlord, RV Division 1 role IDs
+      roleIds: ['1404550423284547644'], // Replace with RV Imperial Warlord, RV Division 1 role IDs
       color: '#FFD700', 
       minScore: 48, 
-      requiredRoles: ['1348010338280280104', '1344697648568995861'] // first one rv div 1 second one is imperial warlord
+     
     },
     'RV Division 2': { 
-      roleIds: ['1348010286547730473', '1345014180859740222'], // Replace with RV Grand Reaper, RV Division 2 role IDs
+      roleIds: ['1404550579685949590'], // Replace with RV Grand Reaper, RV Division 2 role IDs
       color: '#C0C0C0', 
       minScore: 43, 
       maxScore: 47, 
-      requiredRoles: ['1348010286547730473', '1345014180859740222', '1348010338280280104', '1344697648568995861'] 
+      
     },
     'RV Division 3': { 
-      roleIds: ['1348010236673523752', '1344664130896003185'], // Replace with RV Reaper, RV Division 3 role IDs
+      roleIds: ['1404550649546281131', // Replace with RV Reaper, RV Division 3 role IDs
       color: '#CD7F32', 
       minScore: 30, 
       maxScore: 42, 
-      requiredRoles: ['1348010286547730473', '1345014180859740222', '1348010338280280104', '1344697648568995861'] 
+    
     },
     'RV Division 4': { 
-      roleIds: ['1346823147135172692', '1348010092804706315'], // Replace with RV Guard, RV Division 4 role IDs
+      roleIds: ['1404550824897806387'], // Replace with RV Guard, RV Division 4 role IDs
       color: '#00FF00', 
       minScore: 0, 
       maxScore: 29, 
-      requiredRoles: ['1348010286547730473', '1345014180859740222', '1348010338280280104', '1344697648568995861'] 
+    
     }
   },
-  TSB: {
-    'TSB Division 1': { 
-      roleIds: ['1344697648568995861', '1389356996720988260'], // Replace with TSB Imperial Warlord, TSB Division 1 role IDs
-      color: 'rgba(255, 215, 0, 1)', 
-      minScore: 48, 
-      requiredRoles: ['1344697648568995861', '1389356996720988260'] 
-    },
-    'TSB Division 2': { 
-      roleIds: ['1348010286547730473', '1345014180859740222'], // Replace with TSB Grand Reaper, TSB Division 2 role IDs
-      color: '#C0C0C0', 
-      minScore: 43, 
-      maxScore: 47, 
-      requiredRoles: ['1344697648568995861', '1389356996720988260', '1348010286547730473', '1345014180859740222'] 
-    },
-    'TSB Division 3': { 
-      roleIds: ['1389357287553896611', '1344664130896003185'], // Replace with TSB Reaper, TSB Division 3 role IDs
-      color: '#CD7F32', 
-      minScore: 30, 
-      maxScore: 42, 
-      requiredRoles: ['1344697648568995861', '1389356996720988260', '1348010286547730473', '1345014180859740222'] 
-    },
-    'TSB Division 4': { 
-      roleIds: ['1389357444957732865', '1346823147135172692'], // Replace with TSB Guard, TSB Division 4 role IDs
-      color: '#00FF00', 
-      minScore: 0, 
-      maxScore: 29, 
-      requiredRoles: ['1344697648568995861', '1389356996720988260', '1348010286547730473', '1345014180859740222'] 
-    }
-  }
-};
-
+ 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
